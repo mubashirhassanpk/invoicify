@@ -5,16 +5,6 @@ import { useMemo } from "react";
 // RHF
 import { useFormContext, useWatch } from "react-hook-form";
 
-// ShadCn
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-
 // React Wizard
 import { Wizard } from "react-use-wizard";
 
@@ -32,9 +22,11 @@ import {
 // Contexts
 import { useTranslationContext } from "@/contexts/TranslationContext";
 
+// Icons
+import { FileText, CheckCircle } from "lucide-react";
+
 const InvoiceForm = () => {
     const { _t } = useTranslationContext();
-
     const { control } = useFormContext();
 
     // Get invoice number variable
@@ -49,57 +41,58 @@ const InvoiceForm = () => {
         } else {
             return _t("form.newInvBadge");
         }
-    }, [invoiceNumber]);
+    }, [invoiceNumber, _t]);
 
     return (
-        <div className={`xl:w-[55%]`}>
-            <Card>
-                <CardHeader>
-                    <div className="flex gap-3">
-                        <CardTitle className="flex items-center gap-3">
-                            <span className="uppercase">
-                                {_t("form.title")}
-                            </span>
-                        </CardTitle>
-                        <Badge variant="secondary" className="w-fit">
-                            <p style={{ fontSize: "14px" }}>
-                                {invoiceNumberLabel}
+        <div className="card animate-scale-in">
+            <div className="card-header">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="p-2 bg-primary/10 rounded-xl">
+                            <FileText className="h-6 w-6 text-primary" />
+                        </div>
+                        <div>
+                            <h2 className="text-display-md">{_t("form.title")}</h2>
+                            <p className="text-body-sm text-muted-foreground">
+                                {_t("form.description")}
                             </p>
-                        </Badge>
+                        </div>
                     </div>
-                    <CardDescription>{_t("form.description")}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <div className="space-y-8">
-                        <Wizard>
-                            <WizardStep>
-                                <div className="flex gap-x-20 gap-y-10">
-                                    <BillFromSection />
-
-                                    <BillToSection />
-                                </div>
-                            </WizardStep>
-                            <WizardStep>
-                                <div className="flex flex-wrap gap-y-10">
-                                    <InvoiceDetails />
-                                </div>
-                            </WizardStep>
-
-                            <WizardStep>
-                                <Items />
-                            </WizardStep>
-
-                            <WizardStep>
-                                <PaymentInformation />
-                            </WizardStep>
-
-                            <WizardStep>
-                                <InvoiceSummary />
-                            </WizardStep>
-                        </Wizard>
+                    <div className="status-success">
+                        <CheckCircle className="h-3 w-3" />
+                        {invoiceNumberLabel}
                     </div>
-                </CardContent>
-            </Card>
+                </div>
+            </div>
+
+            <div className="card-content">
+                <Wizard>
+                    <WizardStep>
+                        <div className="space-y-8">
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                <BillFromSection />
+                                <BillToSection />
+                            </div>
+                        </div>
+                    </WizardStep>
+
+                    <WizardStep>
+                        <InvoiceDetails />
+                    </WizardStep>
+
+                    <WizardStep>
+                        <Items />
+                    </WizardStep>
+
+                    <WizardStep>
+                        <PaymentInformation />
+                    </WizardStep>
+
+                    <WizardStep>
+                        <InvoiceSummary />
+                    </WizardStep>
+                </Wizard>
+            </div>
         </div>
     );
 };

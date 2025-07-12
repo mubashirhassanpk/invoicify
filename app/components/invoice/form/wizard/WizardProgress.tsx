@@ -12,6 +12,9 @@ import { BaseButton } from "@/app/components";
 // Contexts
 import { useTranslationContext } from "@/contexts/TranslationContext";
 
+// Icons
+import { Check, Circle } from "lucide-react";
+
 // Types
 import { InvoiceType, WizardStepType } from "@/types";
 
@@ -21,11 +24,7 @@ type WizardProgressProps = {
 
 const WizardProgress = ({ wizard }: WizardProgressProps) => {
     const { activeStep, stepCount } = wizard;
-
-    const {
-        formState: { errors },
-    } = useFormContext<InvoiceType>();
-
+    const { formState: { errors } } = useFormContext<InvoiceType>();
     const { _t } = useTranslationContext();
 
     const step1Valid = !errors.sender && !errors.receiver;
@@ -34,7 +33,6 @@ const WizardProgress = ({ wizard }: WizardProgressProps) => {
         !errors.details?.dueDate &&
         !errors.details?.invoiceDate &&
         !errors.details?.currency;
-
     const step3Valid = !errors.details?.items;
     const step4Valid = !errors.details?.paymentInformation;
     const step5Valid =
@@ -44,35 +42,6 @@ const WizardProgress = ({ wizard }: WizardProgressProps) => {
         !errors.details?.discountDetails?.amount &&
         !errors.details?.taxDetails?.amount &&
         !errors.details?.shippingDetails?.cost;
-
-    /**
-     * Determines the button variant based on the given WizardStepType.
-     *
-     * @param {WizardStepType} step - The wizard step object
-     * @returns The button variant ("destructive", "default", or "outline") based on the step's validity and active status.
-     */
-    const returnButtonVariant = (step: WizardStepType) => {
-        if (!step.isValid) {
-            return "destructive";
-        }
-        if (step.id === activeStep) {
-            return "default";
-        } else {
-            return "outline";
-        }
-    };
-
-    /**
-     * Checks whether the given WizardStepType has been passed or not.
-     *
-     * @param {WizardStepType} currentStep - The WizardStepType object
-     * @returns `true` if the step has been passed, `false` if it hasn't, or `undefined` if the step is not valid.
-     */
-    const stepPassed = (currentStep: WizardStepType) => {
-        if (currentStep.isValid) {
-            return activeStep > currentStep.id ? true : false;
-        }
-    };
 
     const steps: WizardStepType[] = [
         {
@@ -102,27 +71,73 @@ const WizardProgress = ({ wizard }: WizardProgressProps) => {
         },
     ];
 
-    return (
-        <div className="flex flex-wrap justify-around items-center gap-y-3">
-            {steps.map((step, idx) => (
-                <div key={step.id} className="flex items-center">
-                    <BaseButton
-                        variant={returnButtonVariant(step)}
-                        className="w-auto"
-                        onClick={() => {
-                            wizard.goToStep(step.id);
-                        }}
-                    >
-                        {step.id + 1}. {step.label}
-                    </BaseButton>
+    const getStepStatus = (step: WizardStepType) => {
+        if (step.id < activeStep) return 'completed';
+        if (step.id === activeStep) return 'current';
+        return 'upcoming';
+    };
 
-                    {/* {step.id != stepCount - 1 && (
-                        <div>
-                            <Dot />
+    return (
+        <div className="mb-8">
+            <div className="flex items-center justify-between">
+                {steps.map((step, index) => {
+                    const status = getStepStatus(step);
+                    const isLast = index === steps.length - 1;
+
+                    return (
+                        <div key={step.id} className="flex items-center flex-1">
+                            <button
+                                onClick={() => wizard.goToStep(step.id)}
+                                className={`
+                                    flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all duration-200
+                                    ${status === 'completed' 
+                                        ? 'bg-primary border-primary text-white' 
+                                        : status === 'current'
+                                        ? 'border-primary text-primary bg-primary/10'
+                                        : 'border-border text-muted-foreground hover:border-primary/50'
+                                    }
+                                `}
+                            >
+                                {status === 'completed' ? (
+                                    <Check className="h-5 w-5" />
+                                ) : (
+                                    <span className="text-sm font-medium">{step.id + 1}</span>
+                                )}
+                            </button>
+
+                            {!isLast && (
+                                <div className={`
+                                    flex-1 h-0.5 mx-4 transition-all duration-200
+                                    ${status === 'completed' ? 'bg-primary' : 'bg-border'}
+                                `} />
+                            )}
                         </div>
-                    )} */}
-                </div>
-            ))}
+                    );
+                })}
+            </div>
+
+            {/* Step Labels */}
+            <div className="flex items-center justify-between mt-4">
+                {steps.map((step) => {
+                    const status = getStepStatus(step);
+                    
+                    return (
+                        <div key={step.id} className="flex-1 text-center">
+                            <p className={`
+                                text-xs font-medium transition-colors duration-200
+                                ${status === 'current' 
+                                    ? 'text-primary' 
+                                    : status === 'completed'
+                                    ? 'text-foreground'
+                                    : 'text-muted-foreground'
+                                }
+                            `}>
+                                {step.label}
+                            </p>
+                        </div>
+                    );
+                })}
+            </div>
         </div>
     );
 };

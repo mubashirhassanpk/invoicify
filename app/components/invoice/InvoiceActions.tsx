@@ -1,13 +1,5 @@
 "use client";
 
-// ShadCn
-import {
-    Card,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
-
 // Components
 import {
     PdfViewer,
@@ -22,78 +14,115 @@ import { useInvoiceContext } from "@/contexts/InvoiceContext";
 import { useTranslationContext } from "@/contexts/TranslationContext";
 
 // Icons
-import { FileInput, FolderUp, Import, Plus } from "lucide-react";
+import { 
+    FileInput, 
+    FolderUp, 
+    Download, 
+    Plus, 
+    Zap,
+    Save,
+    Share2
+} from "lucide-react";
 
 const InvoiceActions = () => {
     const { invoicePdfLoading } = useInvoiceContext();
-
     const { _t } = useTranslationContext();
+
     return (
-        <div className={`xl:w-[45%]`}>
-            <Card className="h-auto sticky top-0 px-2">
-                <CardHeader>
-                    <CardTitle>{_t("actions.title")}</CardTitle>
-                    <CardDescription>{_t("actions.description")}</CardDescription>
-                </CardHeader>
-
-                <div className="flex flex-col flex-wrap items-center gap-2">
-                    <div className="flex flex-wrap gap-3">
-                        {/* Load modal button */}
-                        <InvoiceLoaderModal>
-                            <BaseButton
-                                variant="outline"
-                                tooltipLabel="Open load invoice menu"
-                                disabled={invoicePdfLoading}
-                            >
-                                <FolderUp />
-                                {_t("actions.loadInvoice")}
-                            </BaseButton>
-                        </InvoiceLoaderModal>
-
-                        {/* Export modal button */}
-                        <InvoiceExportModal>
-                            <BaseButton
-                                variant="outline"
-                                tooltipLabel="Open load invoice menu"
-                                disabled={invoicePdfLoading}
-                            >
-                                <Import />
-                                {_t("actions.exportInvoice")}
-                            </BaseButton>
-                        </InvoiceExportModal>
-                    </div>
-
-                    <div className="flex flex-wrap gap-3">
-                        {/* New invoice button */}
-                        <NewInvoiceAlert>
-                            <BaseButton
-                                variant="outline"
-                                tooltipLabel="Get a new invoice form"
-                                disabled={invoicePdfLoading}
-                            >
-                                <Plus />
-                                {_t("actions.newInvoice")}
-                            </BaseButton>
-                        </NewInvoiceAlert>
-
-                        {/* Generate pdf button */}
-                        <BaseButton
-                            type="submit"
-                            tooltipLabel="Generate your invoice"
-                            loading={invoicePdfLoading}
-                            loadingText="Generating your invoice"
-                        >
-                            <FileInput />
-                            {_t("actions.generatePdf")}
-                        </BaseButton>
-                    </div>
-
-                    <div className="w-full">
-                        {/* Live preview and Final pdf */}
-                        <PdfViewer />
+        <div className="space-y-6">
+            {/* Quick Actions Card */}
+            <div className="card">
+                <div className="card-header">
+                    <div className="flex items-center gap-3">
+                        <div className="p-2 bg-primary/10 rounded-xl">
+                            <Zap className="h-5 w-5 text-primary" />
+                        </div>
+                        <div>
+                            <h3 className="text-display-sm">{_t("actions.title")}</h3>
+                            <p className="text-body-sm text-muted-foreground">
+                                {_t("actions.description")}
+                            </p>
+                        </div>
                     </div>
                 </div>
-            </Card>
+
+                <div className="card-content space-y-4">
+                    {/* Primary Actions */}
+                    <div className="space-y-3">
+                        <button
+                            type="submit"
+                            className="btn-primary w-full"
+                            disabled={invoicePdfLoading}
+                        >
+                            {invoicePdfLoading ? (
+                                <>
+                                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
+                                    Generating...
+                                </>
+                            ) : (
+                                <>
+                                    <FileInput className="h-4 w-4" />
+                                    {_t("actions.generatePdf")}
+                                </>
+                            )}
+                        </button>
+
+                        <NewInvoiceAlert>
+                            <button
+                                className="btn-secondary w-full"
+                                disabled={invoicePdfLoading}
+                            >
+                                <Plus className="h-4 w-4" />
+                                {_t("actions.newInvoice")}
+                            </button>
+                        </NewInvoiceAlert>
+                    </div>
+
+                    {/* Secondary Actions */}
+                    <div className="grid grid-cols-2 gap-3">
+                        <InvoiceLoaderModal>
+                            <button
+                                className="btn-ghost w-full"
+                                disabled={invoicePdfLoading}
+                            >
+                                <FolderUp className="h-4 w-4" />
+                                Load
+                            </button>
+                        </InvoiceLoaderModal>
+
+                        <InvoiceExportModal>
+                            <button
+                                className="btn-ghost w-full"
+                                disabled={invoicePdfLoading}
+                            >
+                                <Download className="h-4 w-4" />
+                                Export
+                            </button>
+                        </InvoiceExportModal>
+                    </div>
+                </div>
+            </div>
+
+            {/* Preview Card */}
+            <div className="card">
+                <div className="card-header">
+                    <div className="flex items-center gap-3">
+                        <div className="p-2 bg-secondary rounded-xl">
+                            <Share2 className="h-5 w-5 text-foreground" />
+                        </div>
+                        <div>
+                            <h3 className="text-display-sm">Preview</h3>
+                            <p className="text-body-sm text-muted-foreground">
+                                Live preview of your invoice
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="card-content">
+                    <PdfViewer />
+                </div>
+            </div>
         </div>
     );
 };

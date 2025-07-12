@@ -27,54 +27,66 @@ const FormInput = ({
     labelHelper,
     placeholder,
     vertical = false,
+    className = "",
     ...props
 }: FormInputProps) => {
     const { control } = useFormContext();
 
-    const verticalInput = (
-        <FormField
-            control={control}
-            name={name}
-            render={({ field }) => (
-                <FormItem>
-                    {label && <FormLabel>{`${label}:`}</FormLabel>}
-
-                    {labelHelper && (
-                        <span className="text-xs"> {labelHelper}</span>
-                    )}
-
-                    <FormControl>
-                        <Input
-                            {...field}
-                            placeholder={placeholder}
-                            className="w-[13rem]"
-                            {...props}
-                        />
-                    </FormControl>
-                    <FormMessage />
-                </FormItem>
-            )}
-        />
-    );
-
-    const horizontalInput = (
-        <FormField
-            control={control}
-            name={name}
-            render={({ field }) => (
-                <FormItem>
-                    <div className="flex w-full gap-5 items-center text-sm">
-                        {label && <FormLabel className="flex-1">{`${label}:`}</FormLabel>}
-                        {labelHelper && (
-                            <span className="text-xs"> {labelHelper}</span>
+    if (vertical) {
+        return (
+            <FormField
+                control={control}
+                name={name}
+                render={({ field }) => (
+                    <FormItem className="form-group">
+                        {label && (
+                            <FormLabel className="form-label">
+                                {label}
+                                {labelHelper && (
+                                    <span className="text-xs text-muted-foreground ml-1">
+                                        {labelHelper}
+                                    </span>
+                                )}
+                            </FormLabel>
                         )}
+                        <FormControl>
+                            <Input
+                                {...field}
+                                placeholder={placeholder}
+                                className={`form-input ${className}`}
+                                {...props}
+                            />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+        );
+    }
 
+    return (
+        <FormField
+            control={control}
+            name={name}
+            render={({ field }) => (
+                <FormItem>
+                    <div className="flex items-center gap-4">
+                        {label && (
+                            <FormLabel className="form-label min-w-0 flex-shrink-0 w-32">
+                                {label}
+                                {labelHelper && (
+                                    <span className="text-xs text-muted-foreground block">
+                                        {labelHelper}
+                                    </span>
+                                )}
+                            </FormLabel>
+                        )}
                         <div className="flex-1">
                             <FormControl>
                                 <Input
                                     {...field}
                                     placeholder={placeholder}
-                                    className="w-[13rem]"
+                                    className={`form-input ${className}`}
                                     {...props}
                                 />
                             </FormControl>
@@ -85,7 +97,6 @@ const FormInput = ({
             )}
         />
     );
-    return vertical ? verticalInput : horizontalInput;
 };
 
 export default FormInput;
