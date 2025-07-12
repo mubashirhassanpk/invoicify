@@ -6,14 +6,11 @@ import { useFormContext } from "react-hook-form";
 // React Wizard
 import { WizardValues } from "react-use-wizard";
 
-// Components
-import { BaseButton } from "@/app/components";
-
 // Contexts
 import { useTranslationContext } from "@/contexts/TranslationContext";
 
 // Icons
-import { Check, Circle } from "lucide-react";
+import { Check, Circle, Users, FileText, Receipt, CreditCard, Sparkles } from "lucide-react";
 
 // Types
 import { InvoiceType, WizardStepType } from "@/types";
@@ -71,6 +68,15 @@ const WizardProgress = ({ wizard }: WizardProgressProps) => {
         },
     ];
 
+    const stepIcons = [Users, FileText, Receipt, CreditCard, Sparkles];
+    const stepColors = [
+        "text-blue-600 bg-blue-50 border-blue-200",
+        "text-emerald-600 bg-emerald-50 border-emerald-200", 
+        "text-purple-600 bg-purple-50 border-purple-200",
+        "text-orange-600 bg-orange-50 border-orange-200",
+        "text-pink-600 bg-pink-50 border-pink-200"
+    ];
+
     const getStepStatus = (step: WizardStepType) => {
         if (step.id < activeStep) return 'completed';
         if (step.id === activeStep) return 'current';
@@ -79,64 +85,101 @@ const WizardProgress = ({ wizard }: WizardProgressProps) => {
 
     return (
         <div className="mb-8">
-            <div className="flex items-center justify-between">
-                {steps.map((step, index) => {
-                    const status = getStepStatus(step);
-                    const isLast = index === steps.length - 1;
-
-                    return (
-                        <div key={step.id} className="flex items-center flex-1">
-                            <button
-                                onClick={() => wizard.goToStep(step.id)}
-                                className={`
-                                    flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all duration-200
-                                    ${status === 'completed' 
-                                        ? 'bg-primary border-primary text-white' 
-                                        : status === 'current'
-                                        ? 'border-primary text-primary bg-primary/10'
-                                        : 'border-border text-muted-foreground hover:border-primary/50'
-                                    }
-                                `}
-                            >
-                                {status === 'completed' ? (
-                                    <Check className="h-5 w-5" />
-                                ) : (
-                                    <span className="text-sm font-medium">{step.id + 1}</span>
-                                )}
-                            </button>
-
-                            {!isLast && (
-                                <div className={`
-                                    flex-1 h-0.5 mx-4 transition-all duration-200
-                                    ${status === 'completed' ? 'bg-primary' : 'bg-border'}
-                                `} />
-                            )}
-                        </div>
-                    );
-                })}
+            {/* Mobile Progress Bar */}
+            <div className="block md:hidden mb-6">
+                <div className="flex justify-between text-sm mb-2">
+                    <span className="text-muted-foreground">Progress</span>
+                    <span className="text-primary font-semibold">{Math.round(((activeStep + 1) / stepCount) * 100)}%</span>
+                </div>
+                <div className="progress-bar-lg">
+                    <div 
+                        className="progress-fill-lg transition-all duration-500 ease-out"
+                        style={{ width: `${((activeStep + 1) / stepCount) * 100}%` }}
+                    ></div>
+                </div>
+                <div className="mt-2 text-center">
+                    <span className="text-sm font-semibold text-foreground">
+                        {steps[activeStep]?.label}
+                    </span>
+                </div>
             </div>
 
-            {/* Step Labels */}
-            <div className="flex items-center justify-between mt-4">
-                {steps.map((step) => {
-                    const status = getStepStatus(step);
-                    
-                    return (
-                        <div key={step.id} className="flex-1 text-center">
-                            <p className={`
-                                text-xs font-medium transition-colors duration-200
-                                ${status === 'current' 
-                                    ? 'text-primary' 
-                                    : status === 'completed'
-                                    ? 'text-foreground'
-                                    : 'text-muted-foreground'
-                                }
-                            `}>
-                                {step.label}
-                            </p>
-                        </div>
-                    );
-                })}
+            {/* Desktop Step Indicators */}
+            <div className="hidden md:block">
+                <div className="flex items-center justify-between">
+                    {steps.map((step, index) => {
+                        const status = getStepStatus(step);
+                        const isLast = index === steps.length - 1;
+                        const Icon = stepIcons[index];
+
+                        return (
+                            <div key={step.id} className="flex items-center flex-1">
+                                <button
+                                    onClick={() => wizard.goToStep(step.id)}
+                                    className={`
+                                        group relative flex items-center justify-center w-12 h-12 rounded-xl border-2 transition-all duration-300 hover-scale
+                                        ${status === 'completed' 
+                                            ? 'bg-primary border-primary text-white shadow-lg' 
+                                            : status === 'current'
+                                            ? `border-primary ${stepColors[index]} shadow-md`
+                                            : 'border-border bg-background text-muted-foreground hover:border-primary/50 hover:bg-primary/5'
+                                        }
+                                    `}
+                                >
+                                    {status === 'completed' ? (
+                                        <Check className="h-6 w-6" />
+                                    ) : (
+                                        <Icon className="h-5 w-5" />
+                                    )}
+                                    
+                                    {/* Tooltip */}
+                                    <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 px-3 py-1 bg-neutral-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap">
+                                        {step.label}
+                                        <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-neutral-900"></div>
+                                    </div>
+                                </button>
+
+                                {!isLast && (
+                                    <div className="flex-1 mx-4">
+                                        <div className={`
+                                            h-1 rounded-full transition-all duration-500 ease-out
+                                            ${status === 'completed' 
+                                                ? 'bg-primary shadow-sm' 
+                                                : 'bg-border'
+                                            }
+                                        `} />
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })}
+                </div>
+
+                {/* Step Labels */}
+                <div className="flex items-center justify-between mt-4">
+                    {steps.map((step, index) => {
+                        const status = getStepStatus(step);
+                        
+                        return (
+                            <div key={step.id} className="flex-1 text-center">
+                                <p className={`
+                                    text-sm font-semibold transition-colors duration-200
+                                    ${status === 'current' 
+                                        ? 'text-primary' 
+                                        : status === 'completed'
+                                        ? 'text-foreground'
+                                        : 'text-muted-foreground'
+                                    }
+                                `}>
+                                    {step.label}
+                                </p>
+                                {status === 'current' && (
+                                    <div className="mt-1 mx-auto w-8 h-0.5 bg-primary rounded-full animate-fade-in"></div>
+                                )}
+                            </div>
+                        );
+                    })}
+                </div>
             </div>
         </div>
     );

@@ -36,7 +36,7 @@ const BaseButton = ({
     ...props
 }: BaseButtonProps) => {
     const getButtonClasses = () => {
-        const baseClasses = "button-press focus-ring transition-all duration-200";
+        const baseClasses = "button-press focus-ring transition-all duration-200 font-semibold";
         
         switch (variant) {
             case "default":
@@ -46,9 +46,24 @@ const BaseButton = ({
             case "ghost":
                 return `btn-ghost ${baseClasses}`;
             case "outline":
-                return `btn-secondary ${baseClasses}`;
+                return `btn-outline ${baseClasses}`;
+            case "destructive":
+                return `inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold text-white bg-error-500 rounded-xl hover:bg-error-600 focus-ring disabled:opacity-50 disabled:pointer-events-none transition-all duration-200 button-press shadow-sm hover:shadow-md ${baseClasses}`;
             default:
                 return baseClasses;
+        }
+    };
+
+    const getSizeClasses = () => {
+        switch (size) {
+            case "sm":
+                return "px-4 py-2 text-sm";
+            case "lg":
+                return "px-8 py-4 text-base";
+            case "icon":
+                return "btn-icon";
+            default:
+                return "";
         }
     };
 
@@ -64,7 +79,7 @@ const BaseButton = ({
     const button = (
         <Button
             type={type}
-            className={`${getButtonClasses()} ${className}`}
+            className={`${getButtonClasses()} ${getSizeClasses()} ${className}`}
             disabled={loading || props.disabled}
             {...props}
         >

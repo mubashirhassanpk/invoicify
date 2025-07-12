@@ -5,7 +5,6 @@ import { useFieldArray, useFormContext } from "react-hook-form";
 
 // Components
 import {
-    BaseButton,
     FormCustomInput,
     FormInput,
 } from "@/app/components";
@@ -14,7 +13,7 @@ import {
 import { useTranslationContext } from "@/contexts/TranslationContext";
 
 // Icons
-import { Plus, Building2 } from "lucide-react";
+import { Plus, Building2, MapPin, Mail, Phone, Globe } from "lucide-react";
 
 const BillFromSection = () => {
     const { control } = useFormContext();
@@ -40,8 +39,11 @@ const BillFromSection = () => {
     return (
         <div className="space-y-6">
             <div className="flex items-center gap-3">
-                <div className="p-2 bg-primary/10 rounded-lg">
-                    <Building2 className="h-5 w-5 text-primary" />
+                <div className="relative">
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl blur-sm opacity-20"></div>
+                    <div className="relative p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl">
+                        <Building2 className="h-6 w-6 text-white" />
+                    </div>
                 </div>
                 <div>
                     <h3 className="text-display-sm">{_t("form.steps.fromAndTo.billFrom")}</h3>
@@ -51,30 +53,45 @@ const BillFromSection = () => {
                 </div>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-5">
+                {/* Business Name & Email */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <FormInput
-                        name="sender.name"
-                        label={_t("form.steps.fromAndTo.name")}
-                        placeholder="Your business name"
-                        vertical
-                    />
-                    <FormInput
-                        name="sender.email"
-                        label={_t("form.steps.fromAndTo.email")}
-                        placeholder="business@example.com"
-                        type="email"
-                        vertical
-                    />
+                    <div className="relative">
+                        <FormInput
+                            name="sender.name"
+                            label={_t("form.steps.fromAndTo.name")}
+                            placeholder="Your business name"
+                            vertical
+                            className="pl-10"
+                        />
+                        <Building2 className="absolute left-3 top-9 h-4 w-4 text-muted-foreground" />
+                    </div>
+                    <div className="relative">
+                        <FormInput
+                            name="sender.email"
+                            label={_t("form.steps.fromAndTo.email")}
+                            placeholder="business@example.com"
+                            type="email"
+                            vertical
+                            className="pl-10"
+                        />
+                        <Mail className="absolute left-3 top-9 h-4 w-4 text-muted-foreground" />
+                    </div>
                 </div>
 
-                <FormInput
-                    name="sender.address"
-                    label={_t("form.steps.fromAndTo.address")}
-                    placeholder="123 Business Street"
-                    vertical
-                />
+                {/* Address */}
+                <div className="relative">
+                    <FormInput
+                        name="sender.address"
+                        label={_t("form.steps.fromAndTo.address")}
+                        placeholder="123 Business Street"
+                        vertical
+                        className="pl-10"
+                    />
+                    <MapPin className="absolute left-3 top-9 h-4 w-4 text-muted-foreground" />
+                </div>
 
+                {/* Location Details */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <FormInput
                         name="sender.zipCode"
@@ -88,36 +105,50 @@ const BillFromSection = () => {
                         placeholder="Your city"
                         vertical
                     />
-                    <FormInput
-                        name="sender.country"
-                        label={_t("form.steps.fromAndTo.country")}
-                        placeholder="Your country"
-                        vertical
-                    />
+                    <div className="relative">
+                        <FormInput
+                            name="sender.country"
+                            label={_t("form.steps.fromAndTo.country")}
+                            placeholder="Your country"
+                            vertical
+                            className="pl-10"
+                        />
+                        <Globe className="absolute left-3 top-9 h-4 w-4 text-muted-foreground" />
+                    </div>
                 </div>
 
-                <FormInput
-                    name="sender.phone"
-                    label={_t("form.steps.fromAndTo.phone")}
-                    placeholder="+1 (555) 123-4567"
-                    type="tel"
-                    vertical
-                />
+                {/* Phone */}
+                <div className="relative">
+                    <FormInput
+                        name="sender.phone"
+                        label={_t("form.steps.fromAndTo.phone")}
+                        placeholder="+1 (555) 123-4567"
+                        type="tel"
+                        vertical
+                        className="pl-10"
+                    />
+                    <Phone className="absolute left-3 top-9 h-4 w-4 text-muted-foreground" />
+                </div>
 
                 {/* Custom Fields */}
-                {fields?.map((field, index) => (
-                    <FormCustomInput
-                        key={field.id}
-                        index={index}
-                        location={CUSTOM_INPUT_NAME}
-                        removeField={removeCustomInput}
-                    />
-                ))}
+                {fields?.length > 0 && (
+                    <div className="space-y-3 p-4 bg-secondary/30 rounded-xl border border-border/50">
+                        <h4 className="text-sm font-semibold text-foreground">Custom Fields</h4>
+                        {fields.map((field, index) => (
+                            <FormCustomInput
+                                key={field.id}
+                                index={index}
+                                location={CUSTOM_INPUT_NAME}
+                                removeField={removeCustomInput}
+                            />
+                        ))}
+                    </div>
+                )}
 
                 <button
                     type="button"
                     onClick={addNewCustomInput}
-                    className="btn-ghost text-sm"
+                    className="btn-ghost text-sm w-full border-2 border-dashed border-border hover:border-primary/50 hover:bg-primary/5"
                 >
                     <Plus className="h-4 w-4" />
                     {_t("form.steps.fromAndTo.addCustomInput")}

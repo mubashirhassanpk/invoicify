@@ -43,7 +43,7 @@ const FormInput = ({
                             <FormLabel className="form-label">
                                 {label}
                                 {labelHelper && (
-                                    <span className="text-xs text-muted-foreground ml-1">
+                                    <span className="text-xs text-muted-foreground ml-1 font-normal">
                                         {labelHelper}
                                     </span>
                                 )}
@@ -53,7 +53,7 @@ const FormInput = ({
                             <Input
                                 {...field}
                                 placeholder={placeholder}
-                                className={`form-input ${className}`}
+                                className={`form-input-lg ${className}`}
                                 {...props}
                             />
                         </FormControl>
@@ -75,7 +75,7 @@ const FormInput = ({
                             <FormLabel className="form-label min-w-0 flex-shrink-0 w-32">
                                 {label}
                                 {labelHelper && (
-                                    <span className="text-xs text-muted-foreground block">
+                                    <span className="text-xs text-muted-foreground block font-normal">
                                         {labelHelper}
                                     </span>
                                 )}
